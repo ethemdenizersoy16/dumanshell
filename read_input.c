@@ -127,10 +127,9 @@ void read_input(char* buffer)
 							else{
 							       	step--;
 							}
-							continue;
 						}
 
-						if(seq[1] == 'B')
+						else if(seq[1] == 'B')
 						{
 							int i;
 							if(step > 1){
@@ -157,9 +156,8 @@ void read_input(char* buffer)
 
 								}	
 								else step++;
-								continue;
 								}
-							if(step == 1)/*load what the user had previously written*/
+							else if(step == 1)/*load what the user had previously written*/
 							{	
 								int n;
 
@@ -181,7 +179,7 @@ void read_input(char* buffer)
 								
 							}
 						}
-						if(seq[1] == 'C')
+						else if(seq[1] == 'C')
 						{
 							if(cursor < len)
 							{
@@ -190,9 +188,8 @@ void read_input(char* buffer)
 								fflush(stdout);
 							
 							}
-							continue;	
 						}
-						if(seq[1] == 'D')
+						else if(seq[1] == 'D')
 						{
 							if(cursor > 0)
 							{		
@@ -202,7 +199,6 @@ void read_input(char* buffer)
 								fflush(stdout);
 								
 							}
-							continue;
 						}
 				}	
 			}	
@@ -242,7 +238,7 @@ void read_input(char* buffer)
 			printf("\a");
 			fflush(stdout);
 		}
-		step = 0;
+		
 		
 		      	      
 	}

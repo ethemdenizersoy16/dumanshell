@@ -7,6 +7,7 @@
 #include "history.h"/*a circular array for implementing the command history*/
 #include "read_input.h"
 #include <termios.h>
+#include "pipe.h"
 
 #define MAX_INPUT  1024 
 #define MAX_ARGS 64 
@@ -19,12 +20,16 @@ int main()
 	char* token;
 	
 	int i = 0;
+	int command_count = 1;
+	int pipes[100];
+	pipes[0] = 0;
+
 	pid_t pid;
 	
 	printf("Hello and welcome to dumanshell.\nThis is a custom shell I am building/have built\n");
 	while(1){
 		
-
+		command_count = 1;
 
 		printf("dumanshell:D>");
 		
@@ -60,12 +65,31 @@ int main()
 		
 		for(i = 0;i < MAX_ARGS && token != NULL;i++)
 		{
-			args[i] = token;
-			token = strtok(NULL," ");
+			if(strcmp(token, "|") == 0)
+			{
+				args[i] = NULL;
+				pipes[command_count++] = i+1;
+			}
+			else
+			{
+				args[i] = token;
+			}
+
+				token = strtok(NULL," ");
 			/*strtok internally stores where the last token ended, it is used as the default value here,
 			 hence why we used NULL in the string parameter*/
 		}
 		args[i] = NULL;
+		
+
+		if(command_count > 1)
+		{
+			custom_pipe(args,command_count,pipes);
+			continue;
+
+		}
+
+
 
 		if(strcmp(args[0],"cd") == 0)
 		{
