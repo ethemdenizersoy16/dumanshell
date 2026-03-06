@@ -1,41 +1,26 @@
-# DumanShell 
+# DumanShell (Custom Unix Shell)
 
-A custom Unix shell implementation in C featuring low-level terminal manipulation, process pipelines, and efficient data structures.
+## Project Summary
+DumanShell is a functional Unix shell built from the ground up in C to explore low-level systems programming. It bypasses high-level abstractions to interact directly with the kernel for process management and I/O control. The latest **V1.0** release introduces a robust I/O redirection system, completing the shell's core functionality.
 
-##  Key Features
+**For a detailed walkthrough of the "why" and "how" behind the implementation logic and engineering challenges, please see the [DEVLOG.md](./DEVLOG.md).**
 
-* **Multi-Stage Pipelines (|):** Supports chaining multiple commands using the pipe operator. Implements a sophisticated "FD-handoff" logic where each child process redirects its input/output to the pipe using `dup2`.
-* **Non-Destructive History Scrolling:** Features Up/Down arrow navigation. If you modify a command while viewing it in history, your changes are tracked locally but do not overwrite the original history entry, preserving your command logs.
-* **Raw Mode Input Engine:** Uses `termios.h` to handle input character-by-character. This supports manual cursor tracking, backspaces, and escape sequences for arrow keys.
-* **Circular History Buffer:** Implements a ring buffer for command history to ensure O(1) performance.
+---
 
-##  Technical Implementation
+## Core Features (V1.0)
+The V1.0 release marks the completion of the fundamental Unix shell features:
 
-### Pipeline Logic
-The shell iterates through a list of piped commands, creating a `pipe()` for each stage except the last.
-* **Redirection:** The child process uses `dup2` to wire `stdin` to the "previous read end" and `stdout` to the current pipe's "write end".
-* **Resource Management:** Both parent and child processes carefully close unused file descriptors to prevent hanging processes and memory leaks.
+* **Process Management:** Full support for external command execution using the `fork-exec-wait` lifecycle.
+* **Multi-Stage Pipelines (|):** Recursive implementation of pipelines using `pipe()` and `dup2()` for seamless inter-process communication.
+* **I/O Redirection:** New support for input redirection (`<`), output overwrite (`>`), and output append (`>>`) with proper file descriptor restoration.
+* **Raw Mode Input Engine:** Custom terminal handling via `termios.h` to support manual cursor tracking, backspaces, and real-time history scrolling.
+* **Non-Destructive History Scrolling:** Uses a **Circular Array** for O(1) performance, allowing you to modify history entries locally without overwriting the original logs.
 
-### Terminal Control
-To achieve Raw Mode, I implemented bitwise filtering to disable `ECHO` and `ICANON`:
-`raw_termios.c_lflag &= ~(ECHO | ICANON);`
 
-### Process Lifecycle
-1. **Read:** Manual character collection in Raw Mode.
-2. **Interpret:** Tokenization via `strtok`; `|` is replaced with null characters to split the arguments list.
-3. **Execute:** Recursive/Loop-based `fork()` and `execvp()` calls for each pipeline stage.
 
-##  Roadmap
-- [x] Basic Command Execution & Built-ins
-- [x] Raw Mode Terminal Configuration
-- [x] Circular Array History List
-- [x] Multi-directional Cursor Movement
-- [x] Process Pipelines (|)
-- [ ] Output Redirection (>, >>, <)
+## Build & Run
+**Build:** `make`  
+**Run:** `./dumanshell`
 
-##  Build & Run
-1. Build: `make`
-2. Run: `./dumanshell`
-
-##  Credits
-The initial process management logic (fork/exec loop) was inspired by [Manoj Singh Negi's Shell Tutorial](https://www.youtube.com/watch?v=vgxWYYdwKLc). The terminal raw mode handling (in part), the history buffer logic, pipe handling, and the line editing features were researched and implemented independently.
+## Credits
+The initial process management logic (fork/exec loop) was inspired by [Manoj Singh Negi's Shell Tutorial](https://www.youtube.com/watch?v=vgxWYYdwKLc). The terminal raw mode handling (in part), the history buffer logic, pipe handling, I/O redirection, and the line editing features were researched and implemented independently.
