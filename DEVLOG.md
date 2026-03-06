@@ -65,5 +65,13 @@ I made it so that | is replaced with a null character in the args list. The indi
 
 The PIDs of each child process are saved in an array in order to check their exit status one by one. After the loop is over, waitpid() is called for each command so that the main process catches up. The exit status of the last command is then printed to the screen if it isn't 0. I also check for an exit signal from any of the commands in the pipe loop.
 
-My next step will be to make my pipe handle signals. After that, I will try to solve input/output redirection.
+To handle I/O redirection, I used a struct named redirection with three fields: input_fl, output_fl, and output_type. These fields store the name of the input file, the name of the output file, and the type of output operation (append or overwrite), respectively. I manage these with an array of this struct, where each index corresponds to a command index in the pipeline. If no redirection is encountered for a command, the file names are simply set to NULL.
+
+For executing a single command, the shell checks if any redirection is required. If so, I first save the current stdin and stdout file descriptors into an array using dup(). I then rewire them to the target files using dup2(). This approach is necessary for built-in commands like cd, which must change the I/O of the parent process. To restore the parent process to its original state, I use the saved descriptors right after the parent calls waitpid().
+
+For pipe chains, the rewiring logic remains the same. However, the check and rewiring are performed right before the execvp() call. Since all commands in a pipe chain are executed within child processes, there is no need to manually restore stdin and stdout after execution.
+
+This release marks the official end of DumanShell V1.0, as it now supports the fundamental functions expected of a Unix shell. I may revisit DumanShell in the future, but for now, I am moving on to different projects.
+
+Thank you for reading!
  
