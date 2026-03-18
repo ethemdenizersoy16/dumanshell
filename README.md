@@ -1,5 +1,5 @@
 # DumanShell (Custom Unix Shell)
-
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ## Project Summary
 DumanShell is a functional Unix shell built from the ground up in C to explore low-level systems programming. It bypasses high-level abstractions to interact directly with the kernel for process management and I/O control. The latest **V1.0** release introduces a robust I/O redirection system, completing the shell's core functionality.
 
